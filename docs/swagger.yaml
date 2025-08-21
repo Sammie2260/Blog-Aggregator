@@ -1,0 +1,228 @@
+basePath: /v1
+definitions:
+  model.Feed:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        minLength: 1
+        type: string
+      url:
+        type: string
+      user_id:
+        type: string
+    required:
+    - name
+    - url
+    - user_id
+    type: object
+  model.FeedRequest:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      user_id:
+        type: string
+    required:
+    - name
+    - url
+    - user_id
+    type: object
+  model.UpdateFeedStruct:
+    properties:
+      createdAt:
+        type: string
+      name:
+        minLength: 1
+        type: string
+      url:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: hey@raralabs.com
+    name: Rara Labs
+  description: This is a sample RSS Blog Aggregator API
+  title: Blog Aggregator API
+  version: "1.0"
+paths:
+  /feeds:
+    get:
+      description: Fetch list of all feeds
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Feed'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all feeds
+      tags:
+      - feeds
+    post:
+      consumes:
+      - application/json
+      description: Add a new feed
+      parameters:
+      - description: Feed data
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/model.FeedRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new feed
+      tags:
+      - feeds
+  /feeds/{id}:
+    delete:
+      description: Soft delete a feed or hard delete using query param ?hard=true
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Set true for hard delete
+        in: query
+        name: hard
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a feed by ID
+      tags:
+      - feeds
+    get:
+      description: Fetch feed details by UUID
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a feed by ID
+      tags:
+      - feeds
+    patch:
+      consumes:
+      - application/json
+      description: Update feed partially by UUID
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Feed fields to update
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateFeedStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a feed by ID
+      tags:
+      - feeds
+swagger: "2.0"

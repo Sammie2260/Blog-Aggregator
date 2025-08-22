@@ -51,18 +51,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		// Allow all origins (use exact domains in production for security)
-		AllowOrigins: []string{"*"},
-		// Allowed HTTP methods
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		// Allow any headers in requests
-		AllowHeaders: []string{"*"},
-		// Expose headers to the browser if needed
-		ExposeHeaders: []string{"Link"},
-		// Set to true if you need cookies/auth headers across domains
-		AllowCredentials: false,
-		// Preflight cache duration (in seconds)
-		//MaxAge: 300,
+		AllowOrigins:     []string{"*"},                                       // Allow all origins (use exact domains in production for security)
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Allowed HTTP methods
+		AllowHeaders:     []string{"*"},                                       // Allow any headers in requests
+		ExposeHeaders:    []string{"Link"},                                    // Expose headers to the browser if needed
+		AllowCredentials: false,                                               // Set to true if you need cookies/auth headers across domains
 	}))
 	e.Validator = validator.NewValidator()
 
@@ -74,12 +67,12 @@ func main() {
 	feeds := v1.Group(("/feeds"))
 
 	// Routes
-	feeds.GET("", feedHandler.ListFeed)
-	feeds.GET("/:id", feedHandler.GetFeed)
-	feeds.POST("", feedHandler.CreateFeed)
-	feeds.PATCH("/:id", feedHandler.UpdateFeed)
+	feeds.GET("", feedHandler.ListFeedHandler)
+	feeds.GET("/:id", feedHandler.GetFeedHandler)
+	feeds.POST("", feedHandler.CreateFeedHandler)
+	feeds.PATCH("/:id", feedHandler.UpdateFeedHandler)
 	//feeds.PUT("/:id", handler.ReplaceFeed)
-	feeds.DELETE("/:id", feedHandler.DeleteFeed)
+	feeds.DELETE("/:id", feedHandler.DeleteFeedHandler)
 
 	//Swagger documentation route
 	e.GET("/swagger/*", echoSwagger.WrapHandler)

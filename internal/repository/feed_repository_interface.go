@@ -7,10 +7,10 @@ import (
 )
 
 type FeedRepository interface {
-	CreateFeed(feed *model.Feed) (*model.Feed, error)
-	ListFeed() ([]*model.Feed, error)
-	GetFeed(id uuid.UUID) (*model.Feed, error)
-	UpdateFeed(feed *model.Feed) (*model.Feed, error)
+	CreateFeedRepo(feed *model.Feed) (*model.Feed, error)
+	ListFeedRepo() ([]*model.Feed, error)
+	GetFeedRepo(id uuid.UUID) (*model.Feed, error)
+	UpdateFeedRepo(feed *model.Feed) (*model.Feed, error)
 	//ReplaceFeed(feed *model.Feed) (*model.Feed, error)
-	DeleteFeed(id uuid.UUID) error
+	DeleteFeedRepo(id uuid.UUID) error
 }

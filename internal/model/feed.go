@@ -36,14 +36,14 @@ type UpdateFeedStruct struct {
 	UserID *uuid.UUID `json:"user_id" validate:"omitempty,uuid"`
 }
 
-type FeedRequest struct {
+type CreateFeedRequest struct {
 	Name   string `json:"name" validate:"required"`
 	Url    string `json:"url" validate:"required,url"`
 	UserID string `json:"user_id" validate:"required,uuid"`
-} //esma naam ferya chha so thunderclient garda error aauna sakcha publishdate-->createdAt
-
-type FeedResponse struct {
-    ID   uuid.UUID `json:"id"`
-    Name string    `json:"name"`
-    Url  string    `json:"url"`
 }
+
+// type FeedResponse struct {
+// 	ID   uuid.UUID `json:"id"`
+// 	Name string    `json:"name"`
+// 	Url  string    `json:"url"`
+// }

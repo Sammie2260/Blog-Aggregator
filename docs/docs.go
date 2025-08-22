@@ -77,7 +77,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.FeedRequest"
+                            "$ref": "#/definitions/model.CreateFeedRequest"
                         }
                     }
                 ],
@@ -281,6 +281,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.CreateFeedRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "url",
+                "user_id"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Feed": {
             "type": "object",
             "required": [
@@ -307,31 +326,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.FeedRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "url",
-                "user_id"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "model.UpdateFeedStruct": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string",
                     "minLength": 1

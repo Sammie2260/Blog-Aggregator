@@ -14,7 +14,6 @@ import (
 type FeedHandler struct {
 	Service *service.FeedService
 }
-
 // ListFeed godoc
 // @Summary Get all feeds
 // @Description Fetch list of all feeds
@@ -24,8 +23,8 @@ type FeedHandler struct {
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Router /feeds [get]
-func (h *FeedHandler) ListFeed(c echo.Context) error {
-	feeds, err := h.Service.ListFeed()
+func (h *FeedHandler) ListFeedHandler(c echo.Context) error {
+	feeds, err := h.Service.ListFeedService()
 	if err != nil {
 		log.Println("Error fetching feeds:", err)
 		return response.Error(c, "Failed to fetch feeds")
@@ -49,13 +48,13 @@ func (h *FeedHandler) ListFeed(c echo.Context) error {
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Router /feeds/{id} [get]
-func (h *FeedHandler) GetFeed(c echo.Context) error {
+func (h *FeedHandler) GetFeedHandler(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return response.BadRequest(c, "Invalid UUID")
 	}
 
-	feed, err := h.Service.GetFeed(id)
+	feed, err := h.Service.GetFeedService(id)
 	if err != nil {
 		return response.NotFound(c, "Feed not found")
 	}
@@ -69,38 +68,28 @@ func (h *FeedHandler) GetFeed(c echo.Context) error {
 // @Tags feeds
 // @Accept json
 // @Produce json
-// @Param feed body model.FeedRequest true "Feed data"
+// @Param feed body model.CreateFeedRequest true "Feed data"
 // @Success 201 {object} model.Feed
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /feeds [post]
-func (h *FeedHandler) CreateFeed(c echo.Context) error {
-	input := new(model.FeedRequest)
-	if err := c.Bind(input); err != nil {
-		return response.BadRequest(c, err.Error())
-	}
-	if err := c.Validate(input); err != nil {
-		return response.BadRequest(c, err.Error())
-	}
+func (h *FeedHandler) CreateFeedHandler(c echo.Context) error {
+    input := new(model.CreateFeedRequest)
+    if err := c.Bind(input); err != nil {
+        return response.BadRequest(c, err.Error())
+    }
+    if err := c.Validate(input); err != nil {
+        return response.BadRequest(c, err.Error())
+    }
 
-	uid, err := uuid.Parse(input.UserID)
-	if err != nil {
-		return response.BadRequest(c, "Invalid UserID")
-	}
+    created, err := h.Service.CreateFeedService(input)
+    if err != nil {
+        return response.Error(c, "Failed to create feed")
+    }
 
-	newFeed := &model.Feed{
-		Name:   input.Name,
-		Url:    input.Url,
-		UserID: uid,
-	}
-
-	created, err := h.Service.CreateFeed(newFeed)
-	if err != nil {
-		return response.Error(c, "Failed to create feed")
-	}
-
-	return response.Success(c, created)
+    return response.Success(c, created) // created is a DTO, not the DB model
 }
+
 
 //replacefeed ko kaam basically
 
@@ -117,37 +106,29 @@ func (h *FeedHandler) CreateFeed(c echo.Context) error {
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /feeds/{id} [patch]
-func (h *FeedHandler) UpdateFeed(c echo.Context) error {
+func (h *FeedHandler) UpdateFeedHandler(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return response.BadRequest(c, "Invalid UUID")
 	}
 
-	input := new(model.UpdateFeedStruct)
-	if err := c.Bind(input); err != nil {
+	var input model.UpdateFeedStruct
+	if err := c.Bind(&input); err != nil {
 		return response.BadRequest(c, "Invalid request body")
 	}
-	if err := c.Validate(input); err != nil {
+	if err := c.Validate(&input); err != nil {
 		return response.BadRequest(c, err.Error())
 	}
 
-	feed := &model.Feed{ID: id}
-	if input.Name != nil {
-		feed.Name = *input.Name
-	}
-	if input.Url != nil {
-		feed.Url = *input.Url
-	}
-	if input.UserID != nil {
-		feed.UserID = *input.UserID
-	}
-
-	updated, err := h.Service.UpdateFeed(feed)
+	updatedFeed, err := h.Service.UpdateFeedService(id, &input)
 	if err != nil {
-		return response.Error(c, "Failed to update feed")
+		if err.Error() == "feed not found" {
+			return response.NotFound(c, "Feed not found")
+		}
+		return response.Error(c, err.Error())
 	}
 
-	return response.Success(c, updated)
+	return response.Success(c, updatedFeed)
 }
 
 // DeleteFeed godoc
@@ -162,13 +143,13 @@ func (h *FeedHandler) UpdateFeed(c echo.Context) error {
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /feeds/{id} [delete]
-func (h *FeedHandler) DeleteFeed(c echo.Context) error {
+func (h *FeedHandler) DeleteFeedHandler(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return response.BadRequest(c, "Invalid UUID")
 	}
 
-	if err := h.Service.DeleteFeed(id); err != nil {
+	if err := h.Service.DeleteFeedService(id); err != nil {
 		return response.Error(c, "Failed to delete feed")
 	}
 

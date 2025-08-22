@@ -1,5 +1,18 @@
 basePath: /v1
 definitions:
+  model.CreateFeedRequest:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      user_id:
+        type: string
+    required:
+    - name
+    - url
+    - user_id
+    type: object
   model.Feed:
     properties:
       createdAt:
@@ -18,23 +31,8 @@ definitions:
     - url
     - user_id
     type: object
-  model.FeedRequest:
-    properties:
-      name:
-        type: string
-      url:
-        type: string
-      user_id:
-        type: string
-    required:
-    - name
-    - url
-    - user_id
-    type: object
   model.UpdateFeedStruct:
     properties:
-      createdAt:
-        type: string
       name:
         minLength: 1
         type: string
@@ -89,7 +87,7 @@ paths:
         name: feed
         required: true
         schema:
-          $ref: '#/definitions/model.FeedRequest'
+          $ref: '#/definitions/model.CreateFeedRequest'
       produces:
       - application/json
       responses:
